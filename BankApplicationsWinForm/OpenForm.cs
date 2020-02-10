@@ -45,7 +45,7 @@ namespace BankApplicationsWinForm
 
             this.Close();
         }
-
+        //s
         public void OpenAccount(Bank<Account> bank)
         {
             decimal sum = Convert.ToDecimal(this.textBox1.Text);
