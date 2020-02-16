@@ -26,23 +26,38 @@ namespace BankApplicationsWinForm
             mainForm.Enabled = false;
             this.mainForm = mainForm;
             this.bank = bank;
+
+            Account[] acc = bank.GetAccunts();
+
+            this.comboBox1.DataSource = acc;
+            this.comboBox1.DisplayMember = "Name";
+            this.comboBox1.ValueMember = "Id";
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            CloseAccount(bank);
+            Account acc = (Account)comboBox1.SelectedItem;
+            if (acc != null)
+            {
+                int id = acc.Id;
+                CloseAccount(bank, id);
+            }
+            else return;
+
             //mainForm.labelDay.Text += bank.CalculatePercentage();
-            mainForm.labelInfo.ForeColor = Color.YellowGreen;
-            mainForm.labelInfo.Text = "Счёт закрыт";
+            //mainForm.LabelInfoProp.ForeColor = Color.YellowGreen;
+            mainForm.LabelInfoProp.Text = "Счёт закрыт";
+            mainForm.Panel.BackColor = Color.Red;
+            mainForm.Panel.ForeColor = Color.Black;
+
             this.Close();
             Service.Refresh(mainForm);
         }
 
-        private void CloseAccount(Bank<Account> bank)
+        private void CloseAccount(Bank<Account> bank, int id)
         {
             try
             {
-                int id = Convert.ToInt32(this.textBox1.Text);
                 bank.Close(id);
 
                 Account[] acc = bank.GetAccunts();
@@ -50,6 +65,7 @@ namespace BankApplicationsWinForm
                 mainForm.ComboBox.DataSource = acc;
                 mainForm.ComboBox.DisplayMember = "Name";
                 mainForm.ComboBox.ValueMember = "Id";
+                Service.LogWrite("Счёт закрыт");
             }
             catch (Exception)
             {
@@ -60,6 +76,11 @@ namespace BankApplicationsWinForm
         private void CloseForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             mainForm.Enabled = true;
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

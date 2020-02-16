@@ -25,19 +25,33 @@ namespace BankApplicationsWinForm
             mainForm.Enabled = false;
             this.mainForm = mainForm;
             this.bank = bank;
+
+            Account[] acc = bank.GetAccunts();
+
+            this.comboBox1.DataSource = acc;
+            this.comboBox1.DisplayMember = "Name";
+            this.comboBox1.ValueMember = "Id";
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Withdraw(bank);
+            Account acc = (Account)comboBox1.SelectedItem;
+            if (acc != null)
+            {
+                int id = acc.Id;
+                Withdraw(bank, id); 
+            }
+            else return;
+
+            mainForm.Panel.BackColor = Color.YellowGreen;
+            mainForm.Panel.ForeColor = Color.Black;
             //form1.labelDay.Text = bank.CalculatePercentage();
             this.Close();
         }
 
-        private void Withdraw(Bank<Account> bank)
+        private void Withdraw(Bank<Account> bank, int id)
         {
             decimal sum = Convert.ToDecimal(this.textBox1.Text);
-            int id = Convert.ToInt32(this.textBox2.Text);
             bank.Withdraw(sum, id);
         }
 

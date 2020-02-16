@@ -26,7 +26,7 @@ namespace BankApplicationsWinForm
         }
 
         public string _name = "Евгений";
-        string _pas = "123";
+        string _pas = "1";
 
         private void button2_Click(object sender, EventArgs e)
         {
