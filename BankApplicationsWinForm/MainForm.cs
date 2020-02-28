@@ -22,7 +22,7 @@ namespace BankApplicationsWinForm
         ToolStripLabel timeLabel;
         ToolStripLabel infoLabel;
         Timer timer;
-
+        public string _idName;
         public MainForm()
         {
         }
@@ -44,7 +44,18 @@ namespace BankApplicationsWinForm
             timer.Tick += timer_Tick;
             timer.Start();
 
-            groupBox1.Text = "Клиент: " + validateForm._name;
+            _idName = validateForm.user.Name;
+            groupBox1.Text = "Клиент: " + validateForm.user.Name;
+            //if (validateForm.ValidTextBox.Text.Equals("Евгений"))
+            //{
+            //_id = 1;
+            LoadDocuments($"{validateForm.user.Name}");
+            //}
+            //if (validateForm.ValidTextBox.Text.Equals("Вика"))
+            //{
+            //    _id = 2;
+            //    LoadDocuments(_id);
+            //}
         }
 
         void timer_Tick(object sender, EventArgs e)
@@ -111,6 +122,7 @@ namespace BankApplicationsWinForm
 
         private void MainForm_FormClosed(object sender, FormClosedEventArgs e)
         {
+            SaveDocuments(_idName);
             validateForm.Close();
         }
 
@@ -159,78 +171,137 @@ namespace BankApplicationsWinForm
         }
         #endregion
 
-        #region Сериализация/Десериализация объеткта Account
 
         private void button1_Click(object sender, EventArgs e)
+        {
+            SaveDocuments(_idName);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            LoadDocuments(_idName);
+        }
+
+        #region Сериализация/Десериализация объеткта Account
+
+        public string _fullpath;
+
+        private void SaveDocuments(string idName)
         {
             XmlSerializer formatterDemand = new XmlSerializer(typeof(DemandAccount[]));
             XmlSerializer formatterDeposit = new XmlSerializer(typeof(DepositAccount[]));
             List<DemandAccount> demList = new List<DemandAccount>();
             List<DepositAccount> depList = new List<DepositAccount>();
-
+            bool saveDamand = false;
+            bool saveDeposit = false;
             try
             {
-                using (var stream = new FileStream("DemandAccounts.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+                DirectoryInfo dirInfo = new DirectoryInfo($"{_idName}");
+                if (!dirInfo.Exists)
                 {
-                    DemandAccount s;
-
-                    foreach (Account item in bank.accounts)
-                    {
-                        if (item is DemandAccount)
-                        {
-                            s = item as DemandAccount;
-                            demList.Add(s);
-                        }
-                    }
-                    formatterDemand.Serialize(stream, demList.ToArray());
-                    Service.LogWrite("Объект DemandAccount сохранён");
+                    dirInfo.Create();
                 }
-                using (var stream = new FileStream("DepositAccounts.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+                _fullpath = dirInfo.FullName;
+                using (var stream = new FileStream($@"{_fullpath}\DemandAccounts_{idName}.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
                 {
-                    DepositAccount s;
-                    foreach (Account item in bank.accounts)
+                    try
                     {
-                        if (item is DepositAccount)
+                        DemandAccount s;
+                        foreach (Account item in bank.accounts)
                         {
-                            s = item as DepositAccount;
-                            depList.Add(s);
+                            if (item is DemandAccount)
+                            {
+                                s = item as DemandAccount;
+                                s.dateTime = DateTime.Now;
+                                demList.Add(s);
+                            }
                         }
+                        formatterDemand.Serialize(stream, demList.ToArray());
+                        Service.LogWrite("Объект DemandAccount сохранён");
+                        saveDamand = true;
                     }
-                    formatterDeposit.Serialize(stream, depList.ToArray());
-                    Service.LogWrite("Объект DemandAccount сохранён");
+                    catch (NullReferenceException nullExep)
+                    {
+                        Service.LogWrite($"Нет аккаунта DemandAccount_{idName}! {nullExep.Message}");
+                    }
                 }
-                this.button1.Text = "ОК";
-                Service.LogWrite("Сохранение ОК");
+                using (var stream = new FileStream($@"{_fullpath}\DepositAccounts_{idName}.xml", FileMode.Create, FileAccess.Write, FileShare.Read))
+                {
+                    try
+                    {
+                        DepositAccount s;
+                        foreach (Account item in bank.accounts)
+                        {
+                            if (item is DepositAccount)
+                            {
+                                s = item as DepositAccount;
+                                s.dateTime = DateTime.Now;
+                                depList.Add(s);
+                            }
+                        }
+                        formatterDeposit.Serialize(stream, depList.ToArray());
+                        Service.LogWrite($"Объект DepositAccounts_{idName} сохранён");
+                        saveDeposit = true;
+                    }
+                    catch (NullReferenceException nullExep)
+                    {
+                        Service.LogWrite($"Нет аккаунта DepositAccounts_{idName}! {nullExep.Message}");
+                    }
+                }
+                if (saveDamand && saveDeposit)
+                {
+                    this.button1.Text = "ОК";
+                    Service.LogWrite("Сохранение ОК");
+                }
+                else throw new Exception("Ошибка сохранения!");
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 this.button1.Text = "Error";
+                Service.LogWrite(ex.Message);
             }
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void LoadDocuments(string idName)
         {
-
             XmlSerializer serializerDem = new XmlSerializer(typeof(DemandAccount[]));
             XmlSerializer serializerDep = new XmlSerializer(typeof(DepositAccount[]));
 
-            DemandAccount[] demAcc;
-            DepositAccount[] depAcc;
+            DemandAccount[] demAcc = null;
+            DepositAccount[] depAcc = null;
 
+            bool loadDamand = false;
+            bool loadDeposit = false;
             try
             {
-                using (var stream = new FileStream("DemandAccounts.xml", FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var stream = new FileStream($@"{idName}\DemandAccounts_{idName}.xml", FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    // Восстанавливаем объект из XML-файла.
-                    demAcc = serializerDem.Deserialize(stream) as DemandAccount[];
-                    Service.LogWrite("Объект DemandAccount загружен");
+                    try
+                    {
+                        // Восстанавливаем объект из XML-файла.
+                        demAcc = serializerDem.Deserialize(stream) as DemandAccount[];
+                        Service.LogWrite($"Объект DemandAccount_{idName} загружен");
+                        loadDamand = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Service.LogWrite(ex.Message);
+                    }
                 }
 
-                using (var stream = new FileStream("DepositAccounts.xml", FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var stream = new FileStream($@"{idName}\DepositAccounts_{idName}.xml", FileMode.Open, FileAccess.Read, FileShare.Read))
                 {
-                    // Восстанавливаем объект из XML-файла.
-                    depAcc = serializerDep.Deserialize(stream) as DepositAccount[];
-                    Service.LogWrite("Объект DepositAccount загружен");
+                    try
+                    {
+                        // Восстанавливаем объект из XML-файла.
+                        depAcc = serializerDep.Deserialize(stream) as DepositAccount[];
+                        Service.LogWrite($"Объект DepositAccount_{idName} загружен");
+                        loadDeposit = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Service.LogWrite(ex.Message);
+                    }
                 }
 
                 Account[] tempAccounts = new Account[demAcc.Length + depAcc.Length];
@@ -240,6 +311,22 @@ namespace BankApplicationsWinForm
                     tempAccounts[s] = depAcc[i];
                 bank.accounts = tempAccounts;
 
+                foreach (var item in bank.accounts)
+                {
+                    DateTime dateTimeOld = item.dateTime;
+                    TimeSpan resultTime = (DateTime.Now - dateTimeOld);
+
+                    if (resultTime.Days != 0)
+                    {
+                        for (int i = 0; i < resultTime.Days; i++)
+                        {
+                            bank.CalculatePercentage();
+
+                        }
+                        //item._days += resultTime.Days;
+                    }
+                }
+
                 Account[] acc = bank.GetAccunts();
 
                 ComboBox.DataSource = acc;
@@ -248,11 +335,11 @@ namespace BankApplicationsWinForm
                 this.button2.Text = "ОК";
                 Service.LogWrite("Загрзка ОК");
             }
-            catch (Exception)
+            catch (Exception exep)
             {
+                Service.LogWrite(exep.Message);
                 this.button2.Text = "Error";
             }
-
         }
         #endregion
 
