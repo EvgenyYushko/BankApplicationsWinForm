@@ -85,26 +85,33 @@ namespace BankApplicationsWinForm
         {
             mainForm.LabelInfoProp.Text = e.Message;
             Service.LogWrite(e.Message);
-            //mainForm.LabelInfoProp.Text += "\n" + "Общая сумма равна:" + e.Sum;
+            mainForm.LabelInfoProp.Text += "\n" + "Общая сумма равна:" + e.Sum;
         }
         // обработчик вывода средств
         private void WithdrawSumHandler(object sender, AccountEventArgs e)
         {
             mainForm.LabelInfoProp.Text = e.Message;
             Service.LogWrite(e.Message);
-            //if (e.Sum > 0)
-            //    mainForm.LabelInfoProp.Text += "Идем тратить деньги";
         }
         // обработчик закрытия счета
         private void CloseAccountHandler(object sender, AccountEventArgs e)
         {
-            this.label1.Text = e.Message;
+            mainForm.LabelInfoProp.Text = e.Message;
             Service.LogWrite(e.Message);
         }
 
         private void OpenForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             mainForm.Enabled = true;
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {   //вводим только цифры
+            char number = e.KeyChar;
+            if (!Char.IsDigit(number))
+            {
+                e.Handled = true;
+            }
         }
     }
 }

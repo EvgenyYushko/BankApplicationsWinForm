@@ -65,7 +65,16 @@ namespace BankApplicationsWinForm
             }
         }
 
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {   //вводим только буквы
+            char letter = e.KeyChar;
+            if (!Char.IsLetter(letter))
+            {
+                e.Handled = true;
+            }
+        }
     }
+
     [Serializable]
     public class User
     {
@@ -93,7 +102,6 @@ namespace BankApplicationsWinForm
 
         public User()
         {
-
         }
     }
 }

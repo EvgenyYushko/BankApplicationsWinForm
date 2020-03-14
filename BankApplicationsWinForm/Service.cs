@@ -22,7 +22,7 @@ namespace BankApplicationsWinForm
 
         static public void LogWrite(string msg)
         {
-            using (StreamWriter sw = new StreamWriter(@"E:\С#\Мои проекты\BankApplicationsWinForm\BankApplicationsWinForm\bin\Debug\trace.txt", true, Encoding.Default))
+            using (StreamWriter sw = new StreamWriter(@"trace.txt", true, Encoding.Default))
             {
                 sw.WriteLine("[" + DateTime.Now.ToString() + "] " + msg);
             }

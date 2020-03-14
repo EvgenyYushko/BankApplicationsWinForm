@@ -36,6 +36,8 @@
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.label2 = new System.Windows.Forms.Label();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
@@ -63,7 +65,6 @@
             // 
             this.panel1.BackColor = System.Drawing.SystemColors.ButtonHighlight;
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Controls.Add(this.labelDay);
             this.panel1.Controls.Add(this.labelInfo);
             this.panel1.ForeColor = System.Drawing.Color.Black;
             this.panel1.Location = new System.Drawing.Point(0, 27);
@@ -74,10 +75,11 @@
             // labelDay
             // 
             this.labelDay.AutoSize = true;
-            this.labelDay.Location = new System.Drawing.Point(255, 33);
+            this.labelDay.Location = new System.Drawing.Point(267, 0);
             this.labelDay.Name = "labelDay";
-            this.labelDay.Size = new System.Drawing.Size(0, 13);
+            this.labelDay.Size = new System.Drawing.Size(10, 13);
             this.labelDay.TabIndex = 2;
+            this.labelDay.Text = ".";
             // 
             // labelInfo
             // 
@@ -92,6 +94,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.labelDay);
             this.panel2.Controls.Add(this.button2);
             this.panel2.Controls.Add(this.button1);
             this.panel2.Controls.Add(this.groupBox1);
@@ -120,7 +123,7 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(329, 23);
+            this.button1.Location = new System.Drawing.Point(329, 24);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(72, 32);
             this.button1.TabIndex = 21;
@@ -130,6 +133,8 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.label5);
+            this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.textBox2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.comboBox1);
@@ -138,12 +143,30 @@
             this.groupBox1.Controls.Add(this.textBox3);
             this.groupBox1.Controls.Add(this.label4);
             this.groupBox1.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.groupBox1.Location = new System.Drawing.Point(133, 12);
+            this.groupBox1.Location = new System.Drawing.Point(133, 13);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(190, 137);
             this.groupBox1.TabIndex = 20;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Клиент";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(150, 89);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(29, 13);
+            this.label5.TabIndex = 20;
+            this.label5.Text = "BYN";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(150, 64);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(29, 13);
+            this.label2.TabIndex = 19;
+            this.label2.Text = "BYN";
             // 
             // textBox2
             // 
@@ -151,7 +174,7 @@
             this.textBox2.Location = new System.Drawing.Point(68, 61);
             this.textBox2.Name = "textBox2";
             this.textBox2.ReadOnly = true;
-            this.textBox2.Size = new System.Drawing.Size(108, 20);
+            this.textBox2.Size = new System.Drawing.Size(76, 20);
             this.textBox2.TabIndex = 16;
             // 
             // label1
@@ -177,10 +200,10 @@
             // textBox4
             // 
             this.textBox4.BackColor = System.Drawing.SystemColors.Info;
-            this.textBox4.Location = new System.Drawing.Point(68, 112);
+            this.textBox4.Location = new System.Drawing.Point(97, 109);
             this.textBox4.Name = "textBox4";
             this.textBox4.ReadOnly = true;
-            this.textBox4.Size = new System.Drawing.Size(108, 20);
+            this.textBox4.Size = new System.Drawing.Size(36, 20);
             this.textBox4.TabIndex = 18;
             // 
             // label3
@@ -198,7 +221,7 @@
             this.textBox3.Location = new System.Drawing.Point(68, 86);
             this.textBox3.Name = "textBox3";
             this.textBox3.ReadOnly = true;
-            this.textBox3.Size = new System.Drawing.Size(108, 20);
+            this.textBox3.Size = new System.Drawing.Size(76, 20);
             this.textBox3.TabIndex = 17;
             // 
             // label4
@@ -206,9 +229,9 @@
             this.label4.AutoSize = true;
             this.label4.Location = new System.Drawing.Point(6, 112);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(31, 13);
+            this.label4.Size = new System.Drawing.Size(163, 13);
             this.label4.TabIndex = 15;
-            this.label4.Text = "Дни:";
+            this.label4.Text = "В банке прошло                 дней";
             // 
             // statusStrip1
             // 
@@ -311,8 +334,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(413, 260);
             this.Controls.Add(this.panel2);
-            this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
@@ -359,6 +382,8 @@
         private System.Windows.Forms.MenuStrip menuStrip1;
         private System.Windows.Forms.ToolStripMenuItem файлToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem журналСобытийToolStripMenuItem;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label2;
     }
 }
 

@@ -6,6 +6,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Serialization;
@@ -22,22 +23,26 @@ namespace BankApplicationsWinForm
         public ValidateForm()
         {
             InitializeComponent();
-            textBox1.Text = "Евгений";
-            //отключили валидацию
-            //mainFrom.Show();
-            //this.Hide();
+            Invalidate();
+            textBox1.Text = "Евгений"; //временно для удобства пользования
             listUser = new List<User>();
+            //задание условий для прогрес бара
+            timer1.Interval = 100;
+            timer1.Enabled = false;
+            progressBar1.Visible = false;
+            progressBar1.Minimum = 0;
+            progressBar1.Maximum = 100;
+            progressBar1.Value = 0;
         }
 
-        public string _name = "Евгений";
-        string _pas = "1";
+        //public string _name = "Евгений";
+        //string _pas = "1";
 
         public TextBox ValidTextBox
         {
             get { return textBox1; }
             set { textBox1 = value; }
         }
-
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -70,9 +75,11 @@ namespace BankApplicationsWinForm
                     Service.LogWrite($"{user.Name} найден в системе");
                     if (textBox2.Text.Equals(user.Password))
                     {
-                        this.mainFrom = new MainForm(this);
-                        mainFrom.Show();
-                        this.Hide();
+                        progressBar1.Value = 0;
+                        progressBar1.Visible = true;
+                        timer1.Enabled = true;
+                        timer1.Start();
+                        this.Enabled = false;
                     }
                     else MessageBox.Show("Неверный логин", "Ошибка входа");
                 }
@@ -83,6 +90,31 @@ namespace BankApplicationsWinForm
         {
             this.createUserForm = new CreateUserForm();
             createUserForm.Show();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (progressBar1.Value == 100)
+            {
+                timer1.Enabled = false;
+
+                this.mainFrom = new MainForm(this);
+                mainFrom.Show();
+                this.Hide();
+            }
+            else
+            {
+                progressBar1.Value += 10;
+            }
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {   //вводим только буквы
+            char letter = e.KeyChar;
+            if (!Char.IsLetter(letter))
+            {
+                e.Handled = true;
+            }
         }
     }
 }

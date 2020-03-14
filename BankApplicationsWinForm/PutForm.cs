@@ -45,6 +45,7 @@ namespace BankApplicationsWinForm
             else return;
             //openForm.labelDay.Text = bank.CalculatePercentage();
             this.Close();
+            this.mainForm.UpdateInfo(); 
         }
 
         private void Put(Bank<Account> bank, int id)
@@ -60,6 +61,15 @@ namespace BankApplicationsWinForm
         private void PutForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             this.mainForm.Enabled = true;
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {   //вводим только цифры
+            char number = e.KeyChar;
+            if (!Char.IsDigit(number) && number != 8 && number != 44) // цифры, клавиша BackSpace и запятая
+            {
+                e.Handled = true;
+            }
         }
     }
 }

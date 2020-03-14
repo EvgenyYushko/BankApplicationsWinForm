@@ -66,6 +66,7 @@ namespace BankApplicationsWinForm
 
         Bank<Account> bank = new Bank<Account>("ЮнитБанк");
 
+
         private void bOpen_Click(object sender, EventArgs e)
         {
             OpenForm openForm = new OpenForm(this, bank);
@@ -126,6 +127,53 @@ namespace BankApplicationsWinForm
             validateForm.Close();
         }
 
+        private void button1_Click(object sender, EventArgs e)
+        {
+            SaveDocuments(_idName);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            LoadDocuments(_idName);
+        }
+
+        private void журналСобытийToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start(@"trace.txt");
+        }
+
+        #region обработчики событий если объекты дессериализованы( костыль :( )
+
+        private void OpenAccountHandler(object sender, AccountEventArgs e)
+        {
+            MessageBox.Show(e.Message, "Результат");
+            Service.LogWrite(e.Message);
+
+            LabelInfoProp.Text = e.Message;
+            Close();
+        }
+        // обработчик добавления денег на счет
+        private void AddSumHandler(object sender, AccountEventArgs e)
+        {
+            LabelInfoProp.Text = e.Message;
+            Service.LogWrite(e.Message);
+            LabelInfoProp.Text += "\n" + "Общая сумма равна:" + e.Sum;
+        }
+        // обработчик вывода средств
+        private void WithdrawSumHandler(object sender, AccountEventArgs e)
+        {
+            LabelInfoProp.Text = e.Message;
+            Service.LogWrite(e.Message);
+        }
+        // обработчик закрытия счета
+        private void CloseAccountHandler(object sender, AccountEventArgs e)
+        {
+            LabelInfoProp.Text = e.Message;
+            Service.LogWrite(e.Message);
+        }
+
+        #endregion
+
         #region Свойства для доступа к полям MainForm
 
         public Panel Panel
@@ -170,17 +218,6 @@ namespace BankApplicationsWinForm
             set { textBox4 = value; }
         }
         #endregion
-
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            SaveDocuments(_idName);
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            LoadDocuments(_idName);
-        }
 
         #region Сериализация/Десериализация объеткта Account
 
@@ -321,7 +358,6 @@ namespace BankApplicationsWinForm
                         for (int i = 0; i < resultTime.Days; i++)
                         {
                             bank.CalculatePercentage();
-
                         }
                         //item._days += resultTime.Days;
                     }
@@ -334,6 +370,9 @@ namespace BankApplicationsWinForm
                 ComboBox.ValueMember = "Id";
                 this.button2.Text = "ОК";
                 Service.LogWrite("Загрзка ОК");
+
+                //Присваивание обработчиков для аккаунтов если они были десиреализованы
+                bank.Open(AddSumHandler, WithdrawSumHandler, CloseAccountHandler, OpenAccountHandler);
             }
             catch (Exception exep)
             {
@@ -342,11 +381,6 @@ namespace BankApplicationsWinForm
             }
         }
         #endregion
-
-        private void журналСобытийToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Process.Start(@"E:\С#\Мои проекты\BankApplicationsWinForm\BankApplicationsWinForm\bin\Debug\trace.txt");
-        }
     }
 
 }

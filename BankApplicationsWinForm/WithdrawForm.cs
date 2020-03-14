@@ -47,6 +47,7 @@ namespace BankApplicationsWinForm
             mainForm.Panel.ForeColor = Color.Black;
             //form1.labelDay.Text = bank.CalculatePercentage();
             this.Close();
+
         }
 
         private void Withdraw(Bank<Account> bank, int id)
@@ -58,6 +59,16 @@ namespace BankApplicationsWinForm
         private void WithdrawForm_FormClosed(object sender, FormClosedEventArgs e)
         {
             mainForm.Enabled = true;
+            this.mainForm.UpdateInfo();
+        }
+
+        private void textBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {   //вводим только цифры
+            char number = e.KeyChar;
+            if (!Char.IsDigit(number) && number != 8)
+            {
+                e.Handled = true;
+            }
         }
     }
 }

@@ -46,12 +46,13 @@ namespace BankApplicationsWinForm
 
             //mainForm.labelDay.Text += bank.CalculatePercentage();
             //mainForm.LabelInfoProp.ForeColor = Color.YellowGreen;
-            mainForm.LabelInfoProp.Text = "Счёт закрыт";
+            //mainForm.LabelInfoProp.Text = "Счёт закрыт";
             mainForm.Panel.BackColor = Color.Red;
             mainForm.Panel.ForeColor = Color.Black;
 
             this.Close();
             Service.Refresh(mainForm);
+            mainForm.UpdateInfo();
         }
 
         private void CloseAccount(Bank<Account> bank, int id)
